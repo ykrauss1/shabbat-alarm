@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -14,8 +15,9 @@
 <style>
 :root{--bg:#0a0e1a;--cd:#111827;--bd:#1e2a42;--ac:#f0c040;--ad:#b8922e;--gl:rgba(240,192,64,.15);--t1:#e8e0d0;--t2:#8a8070;--t3:#5a5548;--er:#f87171;--r:12px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--t1);height:100dvh;overflow:hidden;direction:rtl}
-.ctn{max-width:540px;margin:0 auto;padding:8px 14px 0;position:relative;display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;direction:rtl}
+.ctn{max-width:540px;margin:0 auto;padding:8px 14px 60px;position:relative}
+@media(display-mode:standalone){body{height:100dvh;overflow:hidden}.ctn{padding-bottom:0;display:flex;flex-direction:column;height:100dvh;overflow:hidden}}
 .hdr{text-align:center;margin-bottom:10px;padding-top:0}
 .hdr h1{font-family:'Frank Ruhl Libre',serif;font-size:1.5rem;font-weight:700;color:var(--ac)}
 .hdr .sub{font-size:.72rem;color:var(--t3)}
