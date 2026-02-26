@@ -119,8 +119,9 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 <div class="lock-unlock">
 <div style="background:rgba(255,255,255,.06);border:1px solid var(--bd);border-radius:10px;padding:14px 18px;max-width:280px;margin:0 auto">
 <div style="font-size:.85rem;color:var(--t1);font-weight:600;margin-bottom:6px">&#x1F513; ביטול נעילה</div>
-<div style="font-size:.8rem;color:var(--t2);line-height:1.6">לחץ על המסך <strong style="color:var(--ac)">5 פעמים רצופות</strong><br>ולאחר מכן אשר בכפתור שיופיע</div>
+<div style="font-size:.8rem;color:var(--t2);line-height:1.6">לחץ על המסך <strong style="color:var(--ac)">3 פעמים רצופות</strong><br>ולאחר מכן אשר בכפתור שיופיע</div>
 <div class="lock-counter" id="lockCounter" style="margin-top:8px;font-size:.85rem;color:var(--ac)"></div>
+<div id="lockShakeHint" style="display:none;margin-top:8px;font-size:.75rem;color:var(--t3)">💡 לא מצליח? נער את המכשיר כדי לפתוח</div>
 <div class="lock-unlock-inner" id="lockUnlockInner" style="margin-top:10px"><button id="lockConfirmOff" style="font-family:'Rubik',sans-serif;font-size:.85rem;padding:10px 28px;border-radius:8px;border:2px solid var(--ac);background:var(--gl);color:var(--ac);cursor:pointer;font-weight:600">&#x1F513; בטל נעילה</button></div>
 </div>
 </div>
@@ -309,11 +310,11 @@ function doVibrate(){if(!vibEnabled||!navigator.vibrate)return;const pat=[300,20
 function stopVibrate(){if(navigator.vibrate)navigator.vibrate(0);}
 
 // ===== LOCK SCREEN =====
-let isLocked=false,lockTaps=0,lockTapTimer=null;
+let isLocked=false,lockTaps=0,lockTapTimer=null,lockStartTime=0,shakeEnabled=false,shavuaTovShown=false;
 const lockScreen=$('lockScreen'),lockTime=$('lockTime'),lockDate=$('lockDate'),lockShabbat=$('lockShabbat'),lockCounter=$('lockCounter'),lockUnlockInner=$('lockUnlockInner'),lockConfirmOff=$('lockConfirmOff'),lockBtn=$('lockBtn'),lockOffBtn=$('lockOffBtn'),lockStatus=$('lockStatus');
 
 function activateLock(){
-isLocked=true;lockScreen.classList.add('act');lockBtn.style.display='none';lockOffBtn.style.display='inline-block';lockStatus.textContent='נעילה פעילה';
+isLocked=true;lockStartTime=Date.now();shakeEnabled=false;shavuaTovShown=false;$('lockShakeHint').style.display='none';lockScreen.classList.add('act');lockBtn.style.display='none';lockOffBtn.style.display='inline-block';lockStatus.textContent='נעילה פעילה';
 // Request wake lock to keep screen on
 reqWL();
 // Update lock screen clock
@@ -347,15 +348,20 @@ lockOffBtn.onclick=deactivateLock;
 // Unlock: 5 taps then confirm
 lockScreen.addEventListener('click',e=>{
 if(e.target===lockConfirmOff)return;
-lockTaps++;lockCounter.textContent='('+lockTaps+'/5)';
+lockTaps++;lockCounter.textContent='('+lockTaps+'/3)';
 clearTimeout(lockTapTimer);
 lockTapTimer=setTimeout(()=>{lockTaps=0;lockCounter.textContent='';lockUnlockInner.style.display='none';},2000);
-if(lockTaps>=5){lockUnlockInner.style.display='block';}
+if(lockTaps>=3){lockUnlockInner.style.display='block';}
 });
 lockConfirmOff.onclick=e=>{e.stopPropagation();deactivateLock();};
 
 // Block all touch/scroll on lock screen
 lockScreen.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+let lastShake=0;if(window.DeviceMotionEvent){window.addEventListener('devicemotion',e=>{if(!isLocked||!shakeEnabled)return;const a=e.accelerationIncludingGravity;if(!a)return;const f=Math.abs(a.x)+Math.abs(a.y)+Math.abs(a.z);if(f>35&&Date.now()-lastShake>1000){lastShake=Date.now();lockUnlockInner.style.display='block';}});}
+setInterval(()=>{if(isLocked&&!shakeEnabled&&Date.now()-lockStartTime>30000){shakeEnabled=true;$('lockShakeHint').style.display='block';}},5000);
+function checkAutoUnlock(){if(!isLocked)return;const n=new Date();const sb=getShabbat(curCity,n),cn=CT[curCity];if(!sb||!cn)return;if(sb.isShab){const[hh,mm]=sb.havdalah.split(':').map(Number);const now=n.getHours()*60+n.getMinutes();const hav=hh*60+mm;if(now>=hav&&!shavuaTovShown){shavuaTovShown=true;showShavuaTov(sb,cn);}}}
+function showShavuaTov(sb,cn){lockScreen.innerHTML='<div style="text-align:center;padding:30px 20px"><div style="font-size:2.5rem;margin-bottom:10px">🕊️</div><div style="font-family:Frank Ruhl Libre,serif;font-size:2rem;color:var(--ac);margin-bottom:6px">שבוע טוב!</div><div style="font-size:.85rem;color:var(--t2);margin-bottom:20px">הבדלה: '+sb.havdalah+' ('+cn.n+')</div><div id="shavuaTovInfo" style="font-size:.8rem;color:var(--t3);line-height:1.6;margin-bottom:20px"></div><button onclick="closeLockScreen()" style="font-family:Rubik,sans-serif;font-size:.9rem;padding:10px 28px;border-radius:8px;border:2px solid var(--ac);background:var(--gl);color:var(--ac);cursor:pointer;font-weight:600">המשך לאפליקציה ←</button></div>';}
+setInterval(checkAutoUnlock,30000);
 
 // ===== PATCH: Add vibrate to trigger =====
 const origTrigger=trigger;
