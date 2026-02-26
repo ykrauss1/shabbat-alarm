@@ -14,8 +14,8 @@
 <style>
 :root{--bg:#0a0e1a;--cd:#111827;--bd:#1e2a42;--ac:#f0c040;--ad:#b8922e;--gl:rgba(240,192,64,.15);--t1:#e8e0d0;--t2:#8a8070;--t3:#5a5548;--er:#f87171;--r:12px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;direction:rtl}
-.ctn{max-width:540px;margin:0 auto;padding:10px 14px 60px;position:relative}
+body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--t1);height:100dvh;overflow:hidden;direction:rtl}
+.ctn{max-width:540px;margin:0 auto;padding:8px 14px 0;position:relative;display:flex;flex-direction:column;height:100dvh;overflow:hidden}
 .hdr{text-align:center;margin-bottom:10px;padding-top:0}
 .hdr h1{font-family:'Frank Ruhl Libre',serif;font-size:1.5rem;font-weight:700;color:var(--ac)}
 .hdr .sub{font-size:.72rem;color:var(--t3)}
@@ -28,6 +28,7 @@ body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--t1);min-hei
 .sbi p{font-size:.72rem;color:var(--ad);line-height:1.3}
 .sbt{font-size:.78rem;color:var(--ac);font-weight:500}
 .cd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:10px 12px;margin-bottom:8px}
+.cd.alarms-cd{flex:1;min-height:0;display:flex;flex-direction:column;margin-bottom:0}
 .ct{font-family:'Frank Ruhl Libre',serif;font-size:.9rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .ls{width:100%;font-size:.85rem;padding:8px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;color:var(--t1);font-family:'Rubik',sans-serif}
 .ls:focus{outline:none;border-color:var(--ad)}
@@ -59,7 +60,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 .cp{width:24px;height:24px;border-radius:50%;border:2px solid var(--bd)}
 .btn{font-family:'Rubik',sans-serif;font-size:.88rem;font-weight:600;padding:9px 16px;border-radius:10px;border:0;cursor:pointer;flex:1;text-align:center;transition:.2s}
 .bp{background:var(--ac);color:var(--bg)}.bp:hover{background:#f5cc55}
-.al{display:flex;flex-direction:column;gap:5px;max-height:60px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--ad) transparent}
+.al{display:flex;flex-direction:column;gap:5px;flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--ad) transparent}
 .ae{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:var(--r)}
 .ae.ring{border-color:var(--ac);animation:rp 1s infinite}
 @keyframes rp{50%{box-shadow:0 0 25px var(--gl)}}
@@ -103,7 +104,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 .lock-screen .lock-unlock-inner{display:none;margin-top:8px}
 .lock-screen .lock-unlock button{font-family:'Rubik',sans-serif;font-size:.8rem;padding:8px 24px;border-radius:8px;border:1px solid var(--bd);background:0;color:var(--t2);cursor:pointer}
 .lock-counter{font-size:.7rem;color:var(--t3);margin-top:4px}
-@media(max-width:480px){.clk-t{font-size:2.5rem}.ctn{padding:12px 10px 90px}.db{width:33px;height:33px;font-size:.75rem}.fr{flex-direction:column;gap:8px}}
+@media(max-width:480px){.clk-t{font-size:2.5rem}.ctn{padding:8px 10px 0}.db{width:33px;height:33px;font-size:.75rem}.fr{flex-direction:column;gap:8px}}
 </style>
 </head>
 <body>
@@ -195,7 +196,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 <div style="font-size:.7rem;color:var(--t3);margin-top:3px;text-align:center">&#x2713; עוצמה עולה בהדרגה</div></div>
 
 <div style="display:flex;gap:10px;margin-top:8px"><button class="btn bp" id="sAB" style="width:100%">&#9200; הגדר מעורר</button></div>
-<div class="cd"><div class="ct">&#x1F4CB; מעוררים</div><div class="al" id="aL"><div class="es" id="eS">לא הוגדרו מעוררים</div></div></div>
+<div class="cd alarms-cd"><div class="ct">&#x1F4CB; מעוררים</div><div class="al" id="aL"><div class="es" id="eS">לא הוגדרו מעוררים</div></div></div>
 </div>
 
 <audio id="aA" preload="auto"></audio>
@@ -247,7 +248,7 @@ panelSimple=$('panelSimple'),panelTef=$('panelTef'),modeSimple=$('modeSimple'),m
 // Drawer
 const hamBtn=$('hamBtn'),drawer=$('drawer'),drOv=$('drOv'),drClose=$('drClose');
 function openDrawer(){drawer.classList.add('open');drOv.classList.add('open');}
-function closeDrawer(){drawer.classList.remove('open');drOv.classList.remove('open');}
+function closeDrawer(){stopDrwPrev();drawer.classList.remove('open');drOv.classList.remove('open');}
 hamBtn.onclick=openDrawer;drOv.onclick=closeDrawer;drClose.onclick=closeDrawer;
 // Mode toggle
 modeSimple.onclick=()=>{timeMode='simple';modeSimple.classList.add('act');modeTef.classList.remove('act');panelSimple.style.display='block';panelTef.style.display='none';updWake();};
@@ -265,7 +266,9 @@ const tm=getTefMin();if(tm===null){cW.innerHTML='&#9200; שעת השכמה: --:-
 dR.querySelectorAll('.db').forEach(b=>b.addEventListener('click',()=>{const d=+b.dataset.day;if(selDays.has(d)){selDays.delete(d);b.classList.remove('a');}else{selDays.add(d);b.classList.add('a');}}));
 function updDB(){dR.querySelectorAll('.db').forEach(b=>b.classList.toggle('a',selDays.has(+b.dataset.day)));}
 $('bSh').onclick=()=>{selDays=new Set([6]);updDB();};$('bAl').onclick=()=>{selDays=new Set([0,1,2,3,4,5,6]);updDB();};$('bWd').onclick=()=>{selDays=new Set([0,1,2,3,4]);updDB();};$('bFS').onclick=()=>{selDays=new Set([5,6]);updDB();};$('bRs').onclick=()=>{selDays.clear();updDB();};
-function rSongs(){sL.innerHTML='';SONGS.forEach(s=>{const el=document.createElement('button');el.className='si'+(selSong===s.id?' sel':'');el.innerHTML='<span style="font-size:1.1rem;width:22px;text-align:center;display:inline-flex;align-items:center;justify-content:center">'+(s.icon==='__SHOFAR_IMG__'?'<img src="'+SHOFAR_ICON+'" style="width:20px;height:20px">':s.icon==='__HARP_IMG__'?'<img src="'+HARP_ICON+'" style="width:20px;height:20px">':s.icon==='__HARP_IMG__'?'<img src="'+HARP_ICON+'" style="width:20px;height:20px">':s.icon)+'</span><span class="sn">'+s.name+'</span>'+(s.type==='custom'?'<span class="sp">&#x1F4C1;</span>':'<span class="sp">&#x25B6;</span>');el.addEventListener('click',()=>{if(s.type==='custom'){const i=document.createElement('input');i.type='file';i.accept='audio/*';i.onchange=e=>{if(e.target.files[0]){custFile=URL.createObjectURL(e.target.files[0]);selSong='custom';rSongs();updSongDisplay();}};i.click();}else{selSong=s.id;rSongs();updSongDisplay();}});el.querySelector('.sp').addEventListener('click',e=>{e.stopPropagation();if(s.type==='tone'||s.type==='shofar')prevTone(s.id);else if(custFile){aA.src=custFile;aA.volume=vS.value/100;aA.play().catch(()=>{});setTimeout(()=>aA.pause(),3e3);}});sL.appendChild(el);});}
+let drwPrev=null,drwPrevTO=null;
+function stopDrwPrev(){if(drwPrev){drwPrev.sp.textContent='\u25B6';drwPrev=null;}stopShofar();if(audioCtx){audioCtx.close().catch(()=>{});audioCtx=null;}aA.pause();aA.currentTime=0;if(drwPrevTO){clearTimeout(drwPrevTO);drwPrevTO=null;}}
+function rSongs(){sL.innerHTML='';SONGS.forEach(s=>{const el=document.createElement('button');el.className='si'+(selSong===s.id?' sel':'');const iconHtml=s.icon==='__SHOFAR_IMG__'?'<img src="'+SHOFAR_ICON+'" style="width:20px;height:20px">':s.icon==='__HARP_IMG__'?'<img src="'+HARP_ICON+'" style="width:20px;height:20px">':s.icon;el.innerHTML=(selSong===s.id?'<span style="color:var(--ac);font-size:.9rem;width:18px">✔</span>':'<span style="width:18px"></span>')+'<span style="font-size:1.1rem;width:22px;text-align:center;display:inline-flex;align-items:center;justify-content:center">'+iconHtml+'</span><span class="sn">'+s.name+'</span>'+(s.type==='custom'?'<span class="sp">&#x1F4C1;</span>':'<span class="sp">&#x25B6;</span>');el.addEventListener('click',()=>{stopDrwPrev();if(s.type==='custom'){const i=document.createElement('input');i.type='file';i.accept='audio/*';i.onchange=e=>{if(e.target.files[0]){custFile=URL.createObjectURL(e.target.files[0]);selSong='custom';rSongs();updSongDisplay();}};i.click();}else{selSong=s.id;rSongs();updSongDisplay();}});const spBtn=el.querySelector('.sp');spBtn.addEventListener('click',e=>{e.stopPropagation();if(drwPrev&&drwPrev.id===s.id){stopDrwPrev();return;}stopDrwPrev();spBtn.textContent='\u23F9';drwPrev={id:s.id,sp:spBtn};if(s.type==='tone'||s.type==='shofar')prevTone(s.id);else if(custFile){aA.src=custFile;aA.volume=vS.value/100;aA.play().catch(()=>{});}drwPrevTO=setTimeout(()=>{stopDrwPrev();},4000);});sL.appendChild(el);});}
 function updSongDisplay(){const s=SONGS.find(x=>x.id===selSong);if(s){$('curSongIcon').innerHTML=s.icon==='__SHOFAR_IMG__'?'<img src="'+SHOFAR_ICON+'" style="width:20px;height:20px">':s.icon==='__HARP_IMG__'?'<img src="'+HARP_ICON+'" style="width:20px;height:20px">':s.icon==='__HARP_IMG__'?'<img src="'+HARP_ICON+'" style="width:20px;height:20px">':s.icon;$('curSongName').textContent=s.name;}}
 rSongs();updSongDisplay();
 $('changeSongBtn').onclick=openDrawer;
