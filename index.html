@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+  מעורר לשבת — Shabbat Alarm
+  © 2026 Yossi Krauss — All rights reserved.
+  This software is proprietary. Unauthorized copying, modification,
+  distribution, or use of this code is strictly prohibited.
+-->
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -12,18 +18,23 @@
 <style>
 :root{--bg:#0a0e1a;--cd:#111827;--bd:#1e2a42;--ac:#f0c040;--ad:#b8922e;--gl:rgba(240,192,64,.15);--t1:#e8e0d0;--t2:#8a8070;--t3:#5a5548;--er:#f87171;--r:12px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;direction:rtl}
-.ctn{max-width:540px;margin:0 auto;padding:8px 14px 60px;position:relative}
-@media(display-mode:standalone){body{height:100dvh;overflow:hidden}.ctn{padding-bottom:0;display:flex;flex-direction:column;height:100dvh;overflow:hidden}}
+body{font-family:'Rubik',sans-serif;background:#060810;color:var(--t1);min-height:100vh;direction:rtl}
+.ctn{max-width:540px;margin:0 auto;padding:8px 14px 0;position:relative;background:var(--bg);border-radius:16px 16px 0 0;overflow:hidden}
+body{overflow-y:auto}
+/* btm-nav moved inline */
+.btm-nav-inner{display:flex;justify-content:space-around;align-items:center;padding:6px 0}
+.btm-btn{display:flex;flex-direction:column;align-items:center;gap:2px;background:0;border:0;color:var(--t2);font-family:'Rubik',sans-serif;font-size:.6rem;padding:4px 14px;cursor:pointer;transition:.2s;border-radius:8px}
+.btm-btn.act{color:var(--ac)}.btm-btn:hover{color:var(--ac)}
+.btm-icon{font-size:1.3rem;line-height:1}
 .hdr{text-align:center;margin-bottom:10px;padding-top:0}
 .hdr h1{font-family:'Frank Ruhl Libre',serif;font-size:1.5rem;font-weight:700;color:var(--ac)}
 .hdr .sub{font-size:.72rem;color:var(--t3)}
-.clk{background:linear-gradient(135deg,#111827,#0d1321);border:1px solid var(--bd);border-radius:12px;padding:12px;text-align:center;margin-bottom:10px}
+.clk{background:linear-gradient(135deg,#111827,#0d1321);border:1px solid var(--bd);border-radius:12px 12px 0 0;padding:12px;text-align:center;margin-bottom:10px}
 .clk-t{font-size:2.5rem;font-weight:800;color:var(--ac);line-height:1}
 .clk-s{font-size:1rem;color:var(--ad);vertical-align:super}.clk-p{font-size:.75rem;color:var(--t3);margin-right:4px}
 .clk-hd{font-family:'Frank Ruhl Libre',serif;font-size:.82rem;color:var(--ad);margin-top:4px}
 .clk-gd{font-size:.7rem;color:var(--t2);margin-top:2px}
-.sbi{text-align:center;padding:6px 8px;background:var(--gl);border-radius:8px;border:1px solid rgba(240,192,64,.15);margin-bottom:8px}
+.sbi{text-align:center;padding:6px 8px;background:var(--gl);border-radius:8px;border:1px solid rgba(240,192,64,.15);margin-bottom:8px;display:none}
 .sbt{font-size:.78rem;color:var(--ac);font-weight:500}
 .cd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:10px 12px;margin-bottom:8px}
 .cd.alarms-cd{flex:1;min-height:0;display:flex;flex-direction:column;margin-bottom:0}
@@ -79,8 +90,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 .mode-btn{flex:1;padding:9px;text-align:center;font-family:'Rubik',sans-serif;font-size:.82rem;font-weight:500;background:0;border:0;color:var(--t2);cursor:pointer;transition:.2s}
 .mode-btn.act{background:var(--ac);color:var(--bg);font-weight:600}
 .fov{display:none;position:fixed;inset:0;z-index:50;pointer-events:none}.fov.act{display:block}
-.ham{position:absolute;top:10px;left:10px;z-index:60;width:36px;height:36px;border-radius:8px;background:var(--cd);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:var(--t2);transition:.2s}
-.ham:hover{color:var(--ac);border-color:var(--ad)}
+
 .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:70}.drawer-overlay.open{display:block}
 .drawer{position:fixed;top:0;right:-320px;width:300px;max-width:85vw;height:100vh;background:var(--bg);border-left:1px solid var(--bd);z-index:80;overflow-y:auto;padding:20px 16px;transition:right .3s ease}.drawer.open{right:0}
 .drawer-title{font-family:'Frank Ruhl Libre',serif;font-size:1.1rem;font-weight:700;color:var(--ac);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
@@ -98,7 +108,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 .lock-counter{font-size:.7rem;color:var(--t3);margin-top:4px}
 .zmanim-src{font-size:.65rem;color:var(--t3);text-align:center;margin-top:4px;font-style:italic}
 .zmanim-offline{font-size:.68rem;color:var(--er);text-align:center;margin-top:3px;display:none}
-@media(max-width:480px){.clk-t{font-size:2.5rem}.ctn{padding:8px 10px 0}.db{width:33px;height:33px;font-size:.75rem}.fr{flex-direction:column;gap:8px}}
+@media(max-width:480px){.clk-t{font-size:2.5rem}.ctn{padding:8px 10px 8px}.db{width:33px;height:33px;font-size:.75rem}.fr{flex-direction:column;gap:8px}}
 </style>
 </head>
 <body>
@@ -121,7 +131,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 <div class="lock-unlock-inner" id="lockUnlockInner" style="margin-top:10px"><button id="lockConfirmOff" style="font-family:'Rubik',sans-serif;font-size:.85rem;padding:10px 28px;border-radius:8px;border:2px solid var(--ac);background:var(--gl);color:var(--ac);cursor:pointer;font-weight:600">&#x1F513; בטל נעילה</button></div>
 </div></div></div>
 <div class="cov" id="cov"><div class="ccl">המעורר ייפסק בעוד</div><div class="cn" id="cnum">0</div><div class="ccl">שניות</div><button class="csb" id="cstop">&#9724; עצור</button></div>
-<button class="ham" id="hamBtn">&#9776;</button>
+
 <div class="drawer-overlay" id="drOv"></div>
 <div class="drawer" id="drawer">
 <div class="drawer-title">&#9881; הגדרות <button class="drawer-close" id="drClose">&#x2715;</button></div>
@@ -194,9 +204,24 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 <div class="vr"><span style="font-size:.85rem;color:var(--t3)">&#x1F508;</span><input type="range" id="vS" min="0" max="100" value="70"><span style="font-size:.85rem;color:var(--t3)">&#x1F50A;</span></div>
 <div style="font-size:.7rem;color:var(--t3);margin-top:3px;text-align:center">&#x2713; עוצמה עולה בהדרגה</div></div>
 <div style="display:flex;gap:10px;margin-top:8px"><button class="btn bp" id="sAB" style="width:100%">&#9200; הגדר מעורר</button></div>
-<div class="cd alarms-cd"><div class="ct">&#x1F4CB; מעוררים</div><div class="al" id="aL"><div class="es" id="eS">לא הוגדרו מעוררים</div></div></div></div>
+<div style="height:10px"></div>
+<div class="cd alarms-cd"><div class="ct">&#x1F4CB; מעוררים</div><div class="al" id="aL"><div class="es" id="eS">לא הוגדרו מעוררים</div></div></div>
+<nav id="btmNav" style="display:flex;justify-content:space-around;background:var(--cd);border-top:1px solid var(--bd);border-radius:0 0 12px 12px;padding:6px 0 8px;margin-top:10px">
+<button class="btm-btn act" id="bnHome" onclick="window.btmNav_goto('home')"><span class="btm-icon">⏰</span>מעורר</button>
+<button class="btm-btn" id="bnAlarms" onclick="window.btmNav_goto('alarms')"><span class="btm-icon">📋</span>רשימה</button>
+<button class="btm-btn" id="bnShabbat" onclick="window.btmNav_goto('shabbat')"><span class="btm-icon">🕯️</span>שבת</button>
+<button class="btm-btn" id="bnSettings" onclick="window.openDrawer()"><span class="btm-icon">⚙️</span>הגדרות</button>
+</nav>
+<div style="text-align:center;padding:8px 0 4px;font-size:.6rem;color:var(--t3)">© 2026 Yossi Krauss — כל הזכויות שמורות</div>
+</div>
 <audio id="aA" preload="auto"></audio>
 <script>
+// © 2026 Yossi Krauss — All rights reserved.
+</script>
+<script>
+// © 2026 Yossi Krauss — All rights reserved.
+console.log('⚠ קוד זה מוגן בזכויות יוצרים © 2026 Yossi Krauss — העתקה, שינוי או הפצה ללא אישור אסורים.');
+(function(){
 const CT={jerusalem:{n:'ירושלים',la:31.77,ln:35.21,tz:'Asia/Jerusalem'},telaviv:{n:'תל אביב',la:32.09,ln:34.78,tz:'Asia/Jerusalem'},haifa:{n:'חיפה',la:32.79,ln:34.99,tz:'Asia/Jerusalem'},beersheva:{n:'באר שבע',la:31.25,ln:34.79,tz:'Asia/Jerusalem'},bnei_brak:{n:'בני ברק',la:32.08,ln:34.83,tz:'Asia/Jerusalem'},petach_tikva:{n:'פתח תקווה',la:32.08,ln:34.89,tz:'Asia/Jerusalem'},ashdod:{n:'אשדוד',la:31.80,ln:34.64,tz:'Asia/Jerusalem'},netanya:{n:'נתניה',la:32.32,ln:34.85,tz:'Asia/Jerusalem'},modiin:{n:'מודיעין',la:31.90,ln:35.01,tz:'Asia/Jerusalem'},eilat:{n:'אילת',la:29.56,ln:34.95,tz:'Asia/Jerusalem'},tzfat:{n:'צפת',la:32.96,ln:35.50,tz:'Asia/Jerusalem'},tiberias:{n:'טבריה',la:32.79,ln:35.53,tz:'Asia/Jerusalem'},nyc:{n:'ניו יורק',la:40.71,ln:-74.01,tz:'America/New_York'},lakewood:{n:'לייקווד',la:40.10,ln:-74.22,tz:'America/New_York'},losangeles:{n:'לוס אנג׳לס',la:34.05,ln:-118.24,tz:'America/Los_Angeles'},miami:{n:'מיאמי',la:25.76,ln:-80.19,tz:'America/New_York'},chicago:{n:'שיקגו',la:41.88,ln:-87.63,tz:'America/Chicago'},baltimore:{n:'בולטימור',la:39.29,ln:-76.61,tz:'America/New_York'},london:{n:'לונדון',la:51.51,ln:-0.13,tz:'Europe/London'},paris:{n:'פריז',la:48.86,ln:2.35,tz:'Europe/Paris'},antwerp:{n:'אנטוורפן',la:51.22,ln:4.40,tz:'Europe/Brussels'},zurich:{n:'ציריך',la:47.38,ln:8.54,tz:'Europe/Zurich'},manchester:{n:'מנצ׳סטר',la:53.48,ln:-2.24,tz:'Europe/London'},melbourne:{n:'מלבורן',la:-37.81,ln:144.96,tz:'Australia/Melbourne'},toronto:{n:'טורונטו',la:43.65,ln:-79.38,tz:'America/Toronto'},buenosaires:{n:'בואנוס איירס',la:-34.60,ln:-58.38,tz:'America/Argentina/Buenos_Aires'}};
 const P=n=>String(n).padStart(2,'0');
 function calcSun(lat,lng,d){const r=Math.PI/180,dy=Math.floor((d-new Date(d.getFullYear(),0,0))/864e5),g=(2*Math.PI/365)*(dy-1),eq=229.18*(.000075+.001868*Math.cos(g)-.032077*Math.sin(g)-.014615*Math.cos(2*g)-.040849*Math.sin(2*g)),dc=.006918-.399912*Math.cos(g)+.070257*Math.sin(g)-.006758*Math.cos(2*g)+.000907*Math.sin(2*g)-.002697*Math.cos(3*g)+.00148*Math.sin(3*g),z=90.8333*r,lr=lat*r,ch=(Math.cos(z)/(Math.cos(lr)*Math.cos(dc)))-Math.tan(lr)*Math.tan(dc);if(ch>1||ch<-1)return null;const ha=Math.acos(ch)/r;return{srU:720-4*(lng+ha)-eq,ssU:720-4*(lng-ha)-eq};}
@@ -244,10 +269,10 @@ let alarms=[],aIdC=0,selDays=new Set(),selSong='tone_gentle',actRing=null,flInt=
 const $=id=>document.getElementById(id);
 const cT=$('cT'),cHD=$('cHD'),cGD=$('cGD'),sbt=$('sbt'),cSel=$('cSel'),lI=$('lI'),tG=$('tG'),vT=$('vT'),ctR=$('ctR'),ctT=$('ctT'),pT=$('pT'),cW=$('cW'),dR=$('dR'),sL=$('sL'),aL=$('aL'),eS=$('eS'),dI=$('dI'),vS=$('vS'),c1=$('c1'),c2=$('c2'),cP1=$('cP1'),cP2=$('cP2'),sAB=$('sAB'),fov=$('fov'),cov=$('cov'),cnum=$('cnum'),cstop=$('cstop'),aA=$('aA'),panelSimple=$('panelSimple'),panelTef=$('panelTef'),modeSimple=$('modeSimple'),modeTef=$('modeTef'),simpleTime=$('simpleTime');
 // Drawer
-const hamBtn=$('hamBtn'),drawer=$('drawer'),drOv=$('drOv'),drClose=$('drClose');
+const drawer=$('drawer'),drOv=$('drOv'),drClose=$('drClose');
 function openDrawer(){drawer.classList.add('open');drOv.classList.add('open');}
 function closeDrawer(){stopDrwPrev();drawer.classList.remove('open');drOv.classList.remove('open');}
-hamBtn.onclick=openDrawer;drOv.onclick=closeDrawer;drClose.onclick=closeDrawer;
+drOv.onclick=closeDrawer;drClose.onclick=closeDrawer;
 // Auto GPS on first load
 function initGPS(){
 if(!gpsEnabled){if(!CT[curCity]){curCity='telaviv';cSel.value='telaviv';}lI.textContent=CT[curCity]?CT[curCity].n:'';tick();fetchHebcalForCity();return;}
@@ -265,7 +290,7 @@ modeSimple.onclick=()=>{timeMode='simple';modeSimple.classList.add('act');modeTe
 modeTef.onclick=()=>{timeMode='tefillah';modeTef.classList.add('act');modeSimple.classList.remove('act');panelSimple.style.display='none';panelTef.style.display='block';updWake();};
 simpleTime.addEventListener('change',updWake);
 $('tefBeforeNetz').addEventListener('change',()=>{updVatikinDisplay();updWake();});
-function tick(){const n=new Date(),h=n.getHours(),m=P(n.getMinutes()),s=P(n.getSeconds()),h12=h===0?12:h>12?h-12:h,per=h>=12?'PM':'AM';cT.innerHTML=h12+':'+m+'<span class="clk-s">:'+s+'</span> <span class="clk-p">'+per+'</span>';const dk=n.getFullYear()+'-'+n.getMonth()+'-'+n.getDate()+'-'+m;if(dk!==lastDK){lastDK=dk;const hd=hebDate(n);if(hd)cHD.textContent=hd;cGD.textContent=n.toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const sb=getShabbat(curCity,n),cn=CT[curCity];if(sb&&cn){if(sb.isShab)sbt.innerHTML='\u{1F56F}\uFE0F שבת שלום! ('+sb.shd+') \u00B7 הבדלה: <strong style="color:#34d399">'+sb.havdalah+'</strong> ('+cn.n+')';else if(sb.isFri)sbt.innerHTML='\u{1F56F}\uFE0F הדלקת נרות: <strong style="color:#f0c040">'+sb.candle+'</strong> ('+cn.n+') \u00B7 שבת '+sb.shd;else if(sb.df<=3)sbt.innerHTML='\u{1F56F}\uFE0F כניסת השבת הקרובה '+sb.shd+': <strong style="color:#f0c040">'+sb.candle+'</strong> ('+cn.n+')';else sbt.innerHTML='';}const sun=getSun(curCity,n);if(sun){curSR=sun.sr;}updZmanimDisplay();updWake();rAlarms();}chkAlarms(n);}
+function tick(){const n=new Date(),h=n.getHours(),m=P(n.getMinutes()),s=P(n.getSeconds()),h12=h===0?12:h>12?h-12:h,per=h>=12?'PM':'AM';cT.innerHTML=h12+':'+m+'<span class="clk-s">:'+s+'</span> <span class="clk-p">'+per+'</span>';const dk=n.getFullYear()+'-'+n.getMonth()+'-'+n.getDate()+'-'+m;if(dk!==lastDK){lastDK=dk;const hd=hebDate(n);if(hd)cHD.textContent=hd;cGD.textContent=n.toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const sb=getShabbat(curCity,n),cn=CT[curCity];if(sb&&cn){const nowMin=n.getHours()*60+n.getMinutes();if(sb.isShab){const[hh,hm]=sb.havdalah.split(':').map(Number);const havMin=hh*60+hm;if(nowMin<havMin){sbt.innerHTML='\u{1F56F}\uFE0F שבת שלום! ('+sb.shd+') \u00B7 הבדלה: <strong style="color:#34d399">'+sb.havdalah+'</strong> ('+cn.n+')';}else if(nowMin<havMin+30){sbt.innerHTML='\u{1F56F}\uFE0F שבוע טוב! ('+cn.n+')';}else{sbt.innerHTML='';}}else if(sb.isFri){const[ch,cm]=sb.candle.split(':').map(Number);if(nowMin<ch*60+cm){sbt.innerHTML='\u{1F56F}\uFE0F הדלקת נרות היום: <strong style="color:#f0c040">'+sb.candle+'</strong> ('+cn.n+')';}else{sbt.innerHTML='\u{1F56F}\uFE0F שבת שלום! שבת '+sb.shd;}}else{sbt.innerHTML='';}}document.querySelector('.sbi').style.display=sbt.innerHTML?'block':'none';const sun=getSun(curCity,n);if(sun){curSR=sun.sr;}updZmanimDisplay();updWake();rAlarms();}chkAlarms(n);}
 setInterval(tick,1000);
 cSel.addEventListener('change',()=>{const v=cSel.value;if(v==='auto_gps'){initGPS();return;}
 curCity=v;lI.textContent=CT[v]?CT[v].n:'';lastDK='';hebcalData=null;hebcalDate='';tick();fetchHebcalForCity();save();});
@@ -399,7 +424,19 @@ setInterval(()=>{const ds=new Date();const s=ds.getFullYear()+'-'+P(ds.getMonth(
 // Simulation buttons
 $('simShabbat').onclick=()=>{closeDrawer();activateLock();};
 $('simMotzash').onclick=()=>{closeDrawer();const sb=getShabbat(curCity,new Date()),cn=CT[curCity];if(sb&&cn){activateLock();setTimeout(()=>{showShavuaTov(sb,cn);},500);}else{activateLock();}};
+// Expose needed globals
+window.deactivateLock=deactivateLock;
+window.openDrawer=openDrawer;
+// Bottom nav
+window.btmNav_goto=function(tab){
+  document.querySelectorAll('.btm-btn').forEach(b=>b.classList.remove('act'));
+  document.getElementById('bn'+tab.charAt(0).toUpperCase()+tab.slice(1))&&document.getElementById('bn'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('act');
+  if(tab==='home'){document.getElementById('bnHome').classList.add('act');window.scrollTo({top:0,behavior:'smooth'});}
+  else if(tab==='alarms'){document.getElementById('bnAlarms').classList.add('act');const el=document.querySelector('.alarms-cd');if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}}
+  else if(tab==='shabbat'){document.getElementById('bnShabbat').classList.add('act');const el=document.querySelector('.clk');if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}}
+};
 // Init
 initGPS();
+})();
 </script>
 </body></html>
