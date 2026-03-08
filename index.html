@@ -108,6 +108,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 .lock-counter{font-size:.7rem;color:var(--t3);margin-top:4px}
 .zmanim-src{font-size:.65rem;color:var(--t3);text-align:center;margin-top:4px;font-style:italic}
 .zmanim-offline{font-size:.68rem;color:var(--er);text-align:center;margin-top:3px;display:none}
+.screen{display:block}.screen.hidden{display:none}
+.ctn{overflow-y:auto;max-height:calc(100dvh - 60px)}
 @media(max-width:480px){.clk-t{font-size:2.5rem}.ctn{padding:8px 10px 8px}.db{width:33px;height:33px;font-size:.75rem}.fr{flex-direction:column;gap:8px}}
 </style>
 </head>
@@ -173,46 +175,93 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
 <button class="sb" id="simShabbat" style="padding:5px 12px;font-size:.72rem">&#x1F56F;&#xFE0F; סימולציית שבת</button>
 <button class="sb" id="simMotzash" style="padding:5px 12px;font-size:.72rem">&#x1F312; סימולציית מוצ״ש</button></div>
-<div style="font-size:.7rem;color:var(--t3);margin-top:6px" id="lockStatus"></div></div></div>
+<div style="font-size:.7rem;color:var(--t3);margin-top:6px" id="lockStatus"></div></div>
+<div class="drawer-section"><div class="drawer-label">❓ עזרה ומידע</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<button class="sb" style="padding:8px 12px;font-size:.78rem;text-align:right;width:100%" onclick="window.showHelp()">📖 איך להשתמש?</button>
+<button class="sb" style="padding:8px 12px;font-size:.78rem;text-align:right;width:100%" onclick="window.showAbout()">ℹ️ אודות האפליקציה</button>
+<button class="sb" style="padding:8px 12px;font-size:.78rem;text-align:right;width:100%" onclick="window.contactUs()">✉️ פנה אלינו</button>
+</div></div>
+</div></div>
 <div class="ctn">
-<div class="hdr"><h1>&#9200; מעורר לשבת</h1><div class="sub">הפסקה אוטומטית — ללא צורך בלחיצה</div></div>
-<div class="clk"><div class="clk-t" id="cT">--:--</div><div class="clk-hd" id="cHD"></div><div class="clk-gd" id="cGD"></div></div>
-<div class="sbi"><div class="sbt" id="sbt"></div></div>
-<div class="cd"><div class="ct">&#x23F0; שעת השכמה</div>
-<div class="mode-toggle"><button class="mode-btn act" id="modeSimple">שעה רגילה</button><button class="mode-btn" id="modeTef">&#x1F54D; לפי זמן תפילה</button></div>
-<div id="panelSimple"><label class="fl">בחר שעה</label><input type="time" id="simpleTime" value="06:30"></div>
-<div id="panelTef" style="display:none">
-<div class="tg" id="tG">
-<button class="tb sel" data-type="vatikin"><span class="ti">&#x1F305;</span><span class="tn">ותיקין</span><span class="tt"><span id="vT">--:--</span> <span style="font-size:.65rem;color:var(--t2);font-weight:400" id="vTnetz">| הנץ: --:--</span></span></button>
-<button class="tb" data-type="t0700"><span class="ti">&#x1F566;</span><span class="tn">מניין 07:00</span></button>
-<button class="tb" data-type="t0800"><span class="ti">&#x1F567;</span><span class="tn">מניין 08:00</span></button>
-<button class="tb" data-type="t0900"><span class="ti">&#x1F564;</span><span class="tn">מניין 09:00</span></button>
-<button class="tb" data-type="shmaGra"><span class="ti">&#x1F4D6;</span><span class="tn">ק״ש גר״א</span><span class="tt" id="shmaGraT">--:--</span></button>
-<button class="tb" data-type="shmaMga"><span class="ti">&#x1F4D6;</span><span class="tn">ק״ש מג״א</span><span class="tt" id="shmaMgaT">--:--</span></button>
-<button class="tb" data-type="custom"><span class="ti">&#9998;</span><span class="tn">זמן אחר</span></button></div>
-<div id="ctR" style="display:none"><label class="fl">שעת תפילה</label><input type="time" id="ctT" value="06:30"></div>
-<div class="pr"><span>זמן התארגנות:</span><input type="number" id="pT" value="15" min="0" max="60" step="5" style="width:55px"><span>דקות</span></div>
-<div class="zmanim-src" id="zmanimSrc"></div>
-<div class="zmanim-offline" id="zmanimOffline">&#x26A0; אופליין — הזמנים מחושבים מקומית (סטייה אפשרית של 1-2 דקות)</div>
+
+<!-- ===== מסך בית ===== -->
+<div id="screenHome" class="screen">
+  <div class="clk"><div class="clk-t" id="cT">--:--</div><div class="clk-hd" id="cHD"></div><div class="clk-gd" id="cGD"></div></div>
+  <div class="sbi"><div class="sbt" id="sbt"></div></div>
+  <div class="cd">
+    <div class="ct">&#x23F0; שעת השכמה</div>
+    <div class="mode-toggle"><button class="mode-btn act" id="modeSimple">שעה רגילה</button><button class="mode-btn" id="modeTef">&#x1F54D; לפי זמן תפילה</button></div>
+    <div id="panelSimple"><label class="fl">בחר שעה</label><input type="time" id="simpleTime" value="06:30"></div>
+    <div id="panelTef" style="display:none">
+      <div class="tg" id="tG">
+        <button class="tb sel" data-type="vatikin"><span class="ti">&#x1F305;</span><span class="tn">ותיקין</span><span class="tt"><span id="vT">--:--</span> <span style="font-size:.65rem;color:var(--t2);font-weight:400" id="vTnetz">| הנץ: --:--</span></span></button>
+        <button class="tb" data-type="t0700"><span class="ti">&#x1F566;</span><span class="tn">מניין 07:00</span></button>
+        <button class="tb" data-type="t0800"><span class="ti">&#x1F567;</span><span class="tn">מניין 08:00</span></button>
+        <button class="tb" data-type="t0900"><span class="ti">&#x1F564;</span><span class="tn">מניין 09:00</span></button>
+        <button class="tb" data-type="shmaGra"><span class="ti">&#x1F4D6;</span><span class="tn">ק״ש גר״א</span><span class="tt" id="shmaGraT">--:--</span></button>
+        <button class="tb" data-type="shmaMga"><span class="ti">&#x1F4D6;</span><span class="tn">ק״ש מג״א</span><span class="tt" id="shmaMgaT">--:--</span></button>
+        <button class="tb" data-type="custom"><span class="ti">&#9998;</span><span class="tn">זמן אחר</span></button>
+      </div>
+      <div id="ctR" style="display:none"><label class="fl">שעת תפילה</label><input type="time" id="ctT" value="06:30"></div>
+      <div class="pr"><span>זמן התארגנות:</span><input type="number" id="pT" value="15" min="0" max="60" step="5" style="width:55px"><span>דקות</span></div>
+      <div class="zmanim-src" id="zmanimSrc"></div>
+      <div class="zmanim-offline" id="zmanimOffline">&#x26A0; אופליין — זמנים מקומיים</div>
+    </div>
+    <div class="cw" id="cW">&#9200; שעת השכמה: --:--</div>
+  </div>
+  <div class="cd" style="margin-bottom:6px">
+    <div class="ct">&#x1F4C5; ימים</div>
+    <div class="dsc"><button class="sb" id="bSh">&#x1F56F;&#xFE0F; שבת</button><button class="sb" id="bAl">כל יום</button><button class="sb" id="bWd">א׳–ה׳</button><button class="sb" id="bFS">ו׳–ש׳</button><button class="sb" id="bRs">איפוס</button></div>
+    <div class="dsr" id="dR"><button class="db" data-day="0">א׳</button><button class="db" data-day="1">ב׳</button><button class="db" data-day="2">ג׳</button><button class="db" data-day="3">ד׳</button><button class="db" data-day="4">ה׳</button><button class="db" data-day="5">ו׳</button><button class="db" data-day="6">ש׳</button></div>
+  </div>
+  <div class="cd" style="margin-bottom:6px">
+    <div class="ct">&#x1F3B5; ניגון</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span id="curSongIcon" style="font-size:1.2rem"></span><span id="curSongName" style="font-size:.85rem;color:var(--t1)"></span><button class="sb" id="prevBtn" style="padding:4px 10px;font-size:.95rem">&#9654;</button><button class="sb" id="changeSongBtn" style="margin-right:auto;padding:4px 10px">&#9998; שנה</button></div>
+    <div class="vr"><span style="font-size:.85rem;color:var(--t3)">&#x1F508;</span><input type="range" id="vS" min="0" max="100" value="70"><span style="font-size:.85rem;color:var(--t3)">&#x1F50A;</span></div>
+  </div>
+  <button class="btn bp" id="sAB" style="width:100%;margin-bottom:8px">&#9200; הגדר מעורר</button>
+  <!-- מעורר אחרון -->
+  <div id="lastAlarmBox" style="display:none">
+    <div class="cd" style="margin-bottom:4px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:.8rem;color:var(--t3)">המעורר הקרוב:</span>
+        <button class="sb" id="showAllAlarms" onclick="window.btmNav_goto('alarms')" style="font-size:.68rem">הצג הכל ›</button>
+      </div>
+      <div id="lastAlarmEntry"></div>
+    </div>
+  </div>
 </div>
-<div class="cw" id="cW">&#9200; שעת השכמה: --:--</div></div>
-<div class="cd"><div class="ct">&#x1F4C5; ימים</div>
-<div class="dsc"><button class="sb" id="bSh">&#x1F56F;&#xFE0F; שבת</button><button class="sb" id="bAl">כל יום</button><button class="sb" id="bWd">א׳–ה׳</button><button class="sb" id="bFS">ו׳–ש׳</button><button class="sb" id="bRs">איפוס</button></div>
-<div class="dsr" id="dR"><button class="db" data-day="0">א׳</button><button class="db" data-day="1">ב׳</button><button class="db" data-day="2">ג׳</button><button class="db" data-day="3">ד׳</button><button class="db" data-day="4">ה׳</button><button class="db" data-day="5">ו׳</button><button class="db" data-day="6">ש׳</button></div></div>
-<div class="cd"><div class="ct">&#x1F3B5; ניגון</div>
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span id="curSongIcon" style="font-size:1.2rem"></span><span id="curSongName" style="font-size:.85rem;color:var(--t1)"></span><button class="sb" id="prevBtn" style="padding:4px 10px;font-size:.95rem" title="השמע">&#9654;</button><button class="sb" id="changeSongBtn" style="margin-right:auto;padding:4px 10px">&#9998; שנה</button></div>
-<div class="vr"><span style="font-size:.85rem;color:var(--t3)">&#x1F508;</span><input type="range" id="vS" min="0" max="100" value="70"><span style="font-size:.85rem;color:var(--t3)">&#x1F50A;</span></div>
-<div style="font-size:.7rem;color:var(--t3);margin-top:3px;text-align:center">&#x2713; עוצמה עולה בהדרגה</div></div>
-<div style="display:flex;gap:10px;margin-top:8px"><button class="btn bp" id="sAB" style="width:100%">&#9200; הגדר מעורר</button></div>
-<div style="height:10px"></div>
-<div class="cd alarms-cd"><div class="ct">&#x1F4CB; מעוררים</div><div class="al" id="aL"><div class="es" id="eS">לא הוגדרו מעוררים</div></div></div>
-<nav id="btmNav" style="display:flex;justify-content:space-around;background:var(--cd);border-top:1px solid var(--bd);border-radius:0 0 12px 12px;padding:6px 0 8px;margin-top:10px">
-<button class="btm-btn act" id="bnHome" onclick="window.btmNav_goto('home')"><span class="btm-icon">⏰</span>מעורר</button>
-<button class="btm-btn" id="bnAlarms" onclick="window.btmNav_goto('alarms')"><span class="btm-icon">📋</span>רשימה</button>
-<button class="btm-btn" id="bnShabbat" onclick="window.btmNav_goto('shabbat')"><span class="btm-icon">🕯️</span>שבת</button>
-<button class="btm-btn" id="bnSettings" onclick="window.openDrawer()"><span class="btm-icon">⚙️</span>הגדרות</button>
+
+<!-- ===== מסך מעוררים ===== -->
+<div id="screenAlarms" class="screen" style="display:none">
+  <div class="clk" style="margin-bottom:8px"><div class="clk-t" id="cT2" style="font-size:1.8rem">--:--</div><div class="clk-hd" id="cHD2" style="font-size:.75rem"></div></div>
+  <div class="cd alarms-cd">
+    <div class="ct">&#x23F0; מעוררים</div>
+    <div class="al" id="aL"><div class="es" id="eS">לא הוגדרו מעוררים</div></div>
+  </div>
+</div>
+
+<!-- ===== מסך שבת ===== -->
+<div id="screenShabbat" class="screen" style="display:none">
+  <div class="clk" style="margin-bottom:8px"><div class="clk-t" id="cT3" style="font-size:1.8rem">--:--</div><div class="clk-hd" id="cHD3" style="font-size:.75rem"></div><div class="clk-gd" id="cGD3" style="font-size:.68rem"></div></div>
+  <div class="cd" id="shabbatInfoCard">
+    <div class="ct">&#x1F56F;&#xFE0F; נתוני שבת</div>
+    <div id="shabbatDetails" style="font-size:.85rem;line-height:2;color:var(--t2)">טוען...</div>
+  </div>
+  <div class="cd" id="zmanimCard">
+    <div class="ct">&#x1F305; זמני היום</div>
+    <div id="zmanimDetails" style="font-size:.85rem;line-height:2;color:var(--t2)">טוען...</div>
+  </div>
+</div>
+
+<nav id="btmNav" style="display:flex;justify-content:space-around;background:var(--cd);border-top:1px solid var(--bd);border-radius:0 0 12px 12px;padding:6px 0 8px;margin-top:8px">
+  <button class="btm-btn act" id="bnHome" onclick="window.btmNav_goto('home')"><span class="btm-icon">🏠</span>בית</button>
+  <button class="btm-btn" id="bnAlarms" onclick="window.btmNav_goto('alarms')"><span class="btm-icon">⏰</span>מעוררים</button>
+  <button class="btm-btn" id="bnShabbat" onclick="window.btmNav_goto('shabbat')"><span class="btm-icon">🕯️</span>שבת</button>
+  <button class="btm-btn" id="bnSettings" onclick="window.openDrawer()"><span class="btm-icon">⚙️</span>הגדרות</button>
 </nav>
-<div style="text-align:center;padding:8px 0 4px;font-size:.6rem;color:var(--t3)">© 2026 Yossi Krauss — כל הזכויות שמורות</div>
+<div style="text-align:center;padding:6px 0 4px;font-size:.6rem;color:var(--t3)">© 2026 Yossi Krauss — כל הזכויות שמורות</div>
 </div>
 <audio id="aA" preload="auto"></audio>
 <script>
@@ -290,7 +339,7 @@ modeSimple.onclick=()=>{timeMode='simple';modeSimple.classList.add('act');modeTe
 modeTef.onclick=()=>{timeMode='tefillah';modeTef.classList.add('act');modeSimple.classList.remove('act');panelSimple.style.display='none';panelTef.style.display='block';updWake();};
 simpleTime.addEventListener('change',updWake);
 $('tefBeforeNetz').addEventListener('change',()=>{updVatikinDisplay();updWake();});
-function tick(){const n=new Date(),h=n.getHours(),m=P(n.getMinutes()),s=P(n.getSeconds()),h12=h===0?12:h>12?h-12:h,per=h>=12?'PM':'AM';cT.innerHTML=h12+':'+m+'<span class="clk-s">:'+s+'</span> <span class="clk-p">'+per+'</span>';const dk=n.getFullYear()+'-'+n.getMonth()+'-'+n.getDate()+'-'+m;if(dk!==lastDK){lastDK=dk;const hd=hebDate(n);if(hd)cHD.textContent=hd;cGD.textContent=n.toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const sb=getShabbat(curCity,n),cn=CT[curCity];if(sb&&cn){const nowMin=n.getHours()*60+n.getMinutes();if(sb.isShab){const[hh,hm]=sb.havdalah.split(':').map(Number);const havMin=hh*60+hm;if(nowMin<havMin){sbt.innerHTML='\u{1F56F}\uFE0F שבת שלום! ('+sb.shd+') \u00B7 הבדלה: <strong style="color:#34d399">'+sb.havdalah+'</strong> ('+cn.n+')';}else if(nowMin<havMin+30){sbt.innerHTML='\u{1F56F}\uFE0F שבוע טוב! ('+cn.n+')';}else{sbt.innerHTML='';}}else if(sb.isFri){const[ch,cm]=sb.candle.split(':').map(Number);if(nowMin<ch*60+cm){sbt.innerHTML='\u{1F56F}\uFE0F הדלקת נרות היום: <strong style="color:#f0c040">'+sb.candle+'</strong> ('+cn.n+')';}else{sbt.innerHTML='\u{1F56F}\uFE0F שבת שלום! שבת '+sb.shd;}}else{sbt.innerHTML='';}}document.querySelector('.sbi').style.display=sbt.innerHTML?'block':'none';const sun=getSun(curCity,n);if(sun){curSR=sun.sr;}updZmanimDisplay();updWake();rAlarms();}chkAlarms(n);}
+function tick(){const n=new Date(),h=n.getHours(),m=P(n.getMinutes()),s=P(n.getSeconds()),h12=h===0?12:h>12?h-12:h,per=h>=12?'PM':'AM';cT.innerHTML=h12+':'+m+'<span class="clk-s">:'+s+'</span> <span class="clk-p">'+per+'</span>';const _t2=document.getElementById('cT2'),_t3=document.getElementById('cT3');if(_t2)_t2.textContent=h12+':'+m;if(_t3)_t3.textContent=h12+':'+m;const dk=n.getFullYear()+'-'+n.getMonth()+'-'+n.getDate()+'-'+m;if(dk!==lastDK){lastDK=dk;const hd=hebDate(n);if(hd){cHD.textContent=hd;const h2=document.getElementById('cHD2'),h3=document.getElementById('cHD3'),g3=document.getElementById('cGD3');if(h2)h2.textContent=hd;if(h3)h3.textContent=hd;}cGD.textContent=n.toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const _g3=document.getElementById('cGD3');if(_g3)_g3.textContent=cGD.textContent;const sb=getShabbat(curCity,n),cn=CT[curCity];if(sb&&cn){const nowMin=n.getHours()*60+n.getMinutes();if(sb.isShab){const[hh,hm]=sb.havdalah.split(':').map(Number);const havMin=hh*60+hm;if(nowMin<havMin){sbt.innerHTML='\u{1F56F}\uFE0F שבת שלום! ('+sb.shd+') \u00B7 הבדלה: <strong style="color:#34d399">'+sb.havdalah+'</strong> ('+cn.n+')';}else if(nowMin<havMin+30){sbt.innerHTML='\u{1F56F}\uFE0F שבוע טוב! ('+cn.n+')';}else{sbt.innerHTML='';}}else if(sb.isFri){const[ch,cm]=sb.candle.split(':').map(Number);if(nowMin<ch*60+cm){sbt.innerHTML='\u{1F56F}\uFE0F הדלקת נרות היום: <strong style="color:#f0c040">'+sb.candle+'</strong> ('+cn.n+')';}else{sbt.innerHTML='\u{1F56F}\uFE0F שבת שלום! שבת '+sb.shd;}}else{sbt.innerHTML='';}}document.querySelector('.sbi').style.display=sbt.innerHTML?'block':'none';const sun=getSun(curCity,n);if(sun){curSR=sun.sr;}updZmanimDisplay();updWake();rAlarms();}chkAlarms(n);}
 setInterval(tick,1000);
 cSel.addEventListener('change',()=>{const v=cSel.value;if(v==='auto_gps'){initGPS();return;}
 curCity=v;lI.textContent=CT[v]?CT[v].n:'';lastDK='';hebcalData=null;hebcalDate='';tick();fetchHebcalForCity();save();});
@@ -349,7 +398,8 @@ if(a.tef==='t0800'){const pr=a.prep||15;let m=480-pr;return P(Math.floor(m/60))+
 if(a.tef==='t0900'){const pr=a.prep||15;let m=540-pr;return P(Math.floor(m/60))+':'+P(m%60);}
 if(a.tef==='custom')return a.time;return a.time;}
 const TEF_NAMES={vatikin:'ותיקין',t0700:'מניין 07:00',t0800:'מניין 08:00',t0900:'מניין 09:00',shmaGra:'ק״ש גר״א',shmaMga:'ק״ש מג״א',custom:'מותאם',fixed:''};
-function rAlarms(){if(!alarms.length){eS.style.display='block';aL.innerHTML='';aL.appendChild(eS);return;}eS.style.display='none';aL.innerHTML='';alarms.forEach(a=>{const e=document.createElement('div');e.className='ae'+(actRing&&actRing.aid===a.id?' ring':'');const dynTime=calcAlarmTime(a);const tefLabel=a.tef&&a.tef!=='fixed'?(' \u00B7 '+(TEF_NAMES[a.tef]||'')):'';e.innerHTML='<div class="atd">'+dynTime+'</div><div class="ain"><div class="add">'+a.days.sort().map(d=>HDS[d]).join(' ')+' \u00B7 '+a.dur+'שנ׳'+tefLabel+'</div><div class="asd">'+(SONGS.find(s=>s.id===a.song)||{name:'מותאם'}).name+'</div></div><div class="ato'+(a.on?' on':'')+'" data-id="'+a.id+'"></div><button class="adl" data-id="'+a.id+'">&#x2715;</button>';e.querySelector('.ato').onclick=()=>{a.on=!a.on;rAlarms();save();};e.querySelector('.adl').onclick=()=>{alarms=alarms.filter(x=>x.id!==a.id);rAlarms();save();};aL.appendChild(e);});}
+function rAlarms(){if(!alarms.length){eS.style.display='block';aL.innerHTML='';aL.appendChild(eS);return;}eS.style.display='none';aL.innerHTML='';alarms.forEach(a=>{const e=document.createElement('div');e.className='ae'+(actRing&&actRing.aid===a.id?' ring':'');const dynTime=calcAlarmTime(a);const tefLabel=a.tef&&a.tef!=='fixed'?(' \u00B7 '+(TEF_NAMES[a.tef]||'')):'';e.innerHTML='<div class="atd">'+dynTime+'</div><div class="ain"><div class="add">'+a.days.sort().map(d=>HDS[d]).join(' ')+' \u00B7 '+a.dur+'שנ׳'+tefLabel+'</div><div class="asd">'+(SONGS.find(s=>s.id===a.song)||{name:'מותאם'}).name+'</div></div><div class="ato'+(a.on?' on':'')+'" data-id="'+a.id+'"></div><button class="adl" data-id="'+a.id+'">&#x2715;</button>';e.querySelector('.ato').onclick=()=>{a.on=!a.on;rAlarms();save();};e.querySelector('.adl').onclick=()=>{alarms=alarms.filter(x=>x.id!==a.id);rAlarms();save();};aL.appendChild(e);});
+window.updateLastAlarm&&window.updateLastAlarm();}
 function chkAlarms(n){if(actRing)return;const dow=n.getDay(),ct=P(n.getHours())+':'+P(n.getMinutes()),mk=n.getHours()*60+n.getMinutes();if(mk===lastTrig)return;for(const a of alarms){if(!a.on)continue;const at=calcAlarmTime(a);if(at!==ct||!a.days.includes(dow))continue;lastTrig=mk;trigger(a);break;}}
 function trigger(a){actRing={aid:a.id,dur:a.dur,rem:a.dur,cv:gradVolEnabled?0:a.vol,tv:a.vol,lp:null};rAlarms();reqWL();fov.classList.add('act');let fs=false;flInt=setInterval(()=>{fs=!fs;const hex2rgb=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];const[r1,g1,b1]=hex2rgb(a.c1),[r2,g2,b2]=hex2rgb(a.c2);fov.style.backgroundColor=fs?`rgba(${r1},${g1},${b1},.25)`:`rgba(${r2},${g2},${b2},.25)`;},600);if(gradVolEnabled){const vi=setInterval(()=>{if(!actRing){clearInterval(vi);return;}actRing.cv=Math.min(actRing.cv+a.vol/10,a.vol);if(actRing.cv>=a.vol)clearInterval(vi);},1e3);}actRing.lp=alarmLoop(a.song,gradVolEnabled?.05:a.vol);cov.classList.add('act');cnum.textContent=a.dur;cdInt=setInterval(()=>{if(!actRing)return;actRing.rem--;cnum.textContent=actRing.rem;if(isLocked){$('lockCountdown').style.display='block';$('lockCountdown').textContent='\u{1F514} מצלצל! '+actRing.rem+' שניות נותרו';}if(actRing.rem<=0)stopRing();},1e3);setTimeout(()=>{if(actRing&&actRing.aid===a.id)stopRing();},(a.dur+2)*1e3);}
 function stopRing(){if(!actRing)return;if(actRing.lp)clearInterval(actRing.lp);stopShofar();aA.pause();aA.currentTime=0;clearInterval(flInt);fov.classList.remove('act');fov.style.backgroundColor='';clearInterval(cdInt);cov.classList.remove('act');actRing=null;relWL();rAlarms();$('lockCountdown').style.display='none';}
@@ -426,15 +476,129 @@ $('simShabbat').onclick=()=>{closeDrawer();activateLock();};
 $('simMotzash').onclick=()=>{closeDrawer();const sb=getShabbat(curCity,new Date()),cn=CT[curCity];if(sb&&cn){activateLock();setTimeout(()=>{showShavuaTov(sb,cn);},500);}else{activateLock();}};
 // Expose needed globals
 window.deactivateLock=deactivateLock;
+
+// Update last alarm box on home screen
+window.updateLastAlarm=function(){
+  const box=document.getElementById('lastAlarmBox');
+  const entry=document.getElementById('lastAlarmEntry');
+  if(!box||!entry)return;
+  const active=alarms.filter(a=>a.on);
+  if(!active.length){box.style.display='none';return;}
+  const now=new Date(),nowMin=now.getHours()*60+now.getMinutes(),dow=now.getDay();
+  let nearest=null,nearMin=Infinity;
+  for(const a of active){
+    const at=calcAlarmTime(a);if(!at)continue;
+    const[ah,am]=at.split(':').map(Number),aMin=ah*60+am;
+    for(let d=0;d<7;d++){
+      const cd=(dow+d)%7;if(!a.days.includes(cd))continue;
+      const diff=d*1440+(aMin-nowMin);
+      if(diff<=0&&d===0)continue;
+      if(diff<nearMin){nearMin=diff;nearest={a,at,diff,dayLabel:d===0?'היום':d===1?'מחר':HDS[cd]};}
+      break;
+    }
+  }
+  if(!nearest){box.style.display='none';return;}
+  const h=Math.floor(nearest.diff/60),m=nearest.diff%60;
+  const durStr=h>0?h+'ש׳ '+m+'ד׳':m+'ד׳';
+  const daysStr=nearest.a.days.sort().map(d=>HDS[d]).join(' ');
+  entry.innerHTML='<div style="display:flex;align-items:center;gap:10px"><div style="font-size:1.4rem;font-weight:800;color:var(--ac);min-width:60px">'+nearest.at+'</div><div style="flex:1"><div style="font-size:.75rem;color:var(--t1)">'+nearest.dayLabel+' · עוד '+durStr+'</div><div style="font-size:.68rem;color:var(--t3)">'+daysStr+'</div></div><div class="ato'+(nearest.a.on?' on':'')+'" onclick="nearest_a_toggle('+nearest.a.id+')"></div></div>';
+  box.style.display='block';
+};
+window.nearest_a_toggle=function(id){const a=alarms.find(x=>x.id===id);if(a){a.on=!a.on;rAlarms();save();}};
+
+// Update shabbat screen
+window.updateShabbatScreen=function(){
+  const det=document.getElementById('shabbatDetails');
+  const zdet=document.getElementById('zmanimDetails');
+  if(!det||!zdet)return;
+  const n=new Date(),sb=getShabbat(curCity,n),cn=CT[curCity];
+  if(!sb||!cn){det.innerHTML='<span style="color:var(--t3)">לא זמין</span>';return;}
+  const dow=n.getDay();
+  let html='';
+  html+='<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--bd);padding-bottom:6px;margin-bottom:6px"><span style="color:var(--t3)">📍 מיקום</span><strong style="color:var(--t1)">'+cn.n+'</strong></div>';
+  html+='<div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">🕯️ הדלקת נרות</span><strong style="color:var(--ac)">'+sb.candle+'</strong></div>';
+  html+='<div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">✡️ שבת</span><strong style="color:var(--t1)">'+sb.shd+'</strong></div>';
+  html+='<div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">🌙 הבדלה</span><strong style="color:#34d399">'+sb.havdalah+'</strong></div>';
+  det.innerHTML=html;
+  // Zmanim
+  let zh='';
+  const sun=getSun(curCity,n);
+  if(sun){zh+='<div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">🌅 הנץ החמה</span><strong style="color:var(--t1)">'+P(sun.sr.h)+':'+P(sun.sr.m)+'</strong></div>';}
+  if(hebcalData&&hebcalData.sunrise){const t=hcTime(hebcalData.sunrise);zh+='<div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">🌅 הנץ (Hebcal)</span><strong style="color:var(--t1)">'+P(t.h)+':'+P(t.m)+'</strong></div>';}
+  const sh=calcShmaLocal(curCity,n);
+  if(sh){zh+='<div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">📖 ק״ש גר״א</span><strong style="color:var(--t1)">'+P(sh.shmaGra.h)+':'+P(sh.shmaGra.m)+'</strong></div>';
+  zh+='<div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">📖 ק״ש מג״א</span><strong style="color:var(--t1)">'+P(sh.shmaMga.h)+':'+P(sh.shmaMga.m)+'</strong></div>';}
+  if(hebcalData&&hebcalData.sofZmanShma){const t=hcTime(hebcalData.sofZmanShma);zh+='<div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">📖 ק״ש גר״א (HC)</span><strong style="color:var(--t1)">'+P(t.h)+':'+P(t.m)+'</strong></div>';}
+  zdet.innerHTML=zh||'<span style="color:var(--t3)">טוען זמנים...</span>';
+};
 window.openDrawer=openDrawer;
+
+window.showHelp=function(){
+  closeDrawer();
+  const html=`<div style="position:fixed;inset:0;z-index:300;background:rgba(10,14,26,.95);overflow-y:auto;padding:20px 16px;direction:rtl">
+  <div style="max-width:500px;margin:0 auto">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h2 style="font-family:'Frank Ruhl Libre',serif;color:var(--ac);font-size:1.2rem">📖 איך להשתמש?</h2>
+    <button onclick="this.closest('[style*=fixed]').remove()" style="background:0;border:0;color:var(--t3);font-size:1.4rem;cursor:pointer">✕</button>
+  </div>
+  <div style="font-size:.85rem;color:var(--t2);line-height:1.9">
+    <p style="color:var(--ac);font-weight:600;margin-bottom:4px">⏰ הגדרת מעורר</p>
+    <p>בחר שעה רגילה או לפי זמן תפילה, סמן את הימים הרצויים ולחץ "הגדר מעורר".</p>
+    <p style="color:var(--ac);font-weight:600;margin:10px 0 4px">🕯️ מסך שבת</p>
+    <p>מציג זמני כניסת ויציאת שבת, הנץ החמה וזמני קריאת שמע לפי מיקומך.</p>
+    <p style="color:var(--ac);font-weight:600;margin:10px 0 4px">🔒 נעילת מסך לשבת</p>
+    <p>ניתן לנעול את המסך בכניסת שבת כדי למנוע לחיצות מקריות. לביטול — לחץ 5 שניות רצופות.</p>
+    <p style="color:var(--ac);font-weight:600;margin:10px 0 4px">📍 מיקום</p>
+    <p>האפליקציה משתמשת ב-GPS לחישוב מדויק. ניתן לבחור עיר ידנית בהגדרות.</p>
+    <p style="color:var(--ac);font-weight:600;margin:10px 0 4px">📲 התקנה על מסך הבית</p>
+    <p>לחץ "שתף" בדפדפן ← "הוסף למסך הבית" לשימוש כאפליקציה מלאה.</p>
+  </div></div></div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+};
+
+window.showAbout=function(){
+  closeDrawer();
+  const html=`<div style="position:fixed;inset:0;z-index:300;background:rgba(10,14,26,.95);display:flex;align-items:center;justify-content:center;padding:20px;direction:rtl">
+  <div style="max-width:340px;width:100%;text-align:center">
+    <div style="font-size:3rem;margin-bottom:8px">⏰</div>
+    <h2 style="font-family:'Frank Ruhl Libre',serif;color:var(--ac);font-size:1.4rem;margin-bottom:4px">מעורר לשבת</h2>
+    <p style="font-size:.78rem;color:var(--t3);margin-bottom:16px">גרסה 2.0</p>
+    <p style="font-size:.82rem;color:var(--t2);line-height:1.8;margin-bottom:16px">
+      אפליקציה ייחודית לניהול השכמות שבועיות<br>
+      עם חישוב אוטומטי של זמני שבת ותפילה.<br>
+      פותחה עם אהבה לקהילה היהודית.
+    </p>
+    <p style="font-size:.72rem;color:var(--t3);margin-bottom:20px">© 2026 Yossi Krauss — כל הזכויות שמורות</p>
+    <button onclick="this.closest('[style*=fixed]').remove()" style="font-family:'Rubik',sans-serif;padding:10px 32px;border-radius:10px;border:1px solid var(--bd);background:0;color:var(--t2);cursor:pointer;font-size:.85rem">סגור</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+};
+
+window.contactUs=function(){
+  closeDrawer();
+  const html=`<div style="position:fixed;inset:0;z-index:300;background:rgba(10,14,26,.95);display:flex;align-items:center;justify-content:center;padding:20px;direction:rtl">
+  <div style="max-width:340px;width:100%;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:12px">✉️</div>
+    <h2 style="font-family:'Frank Ruhl Libre',serif;color:var(--ac);font-size:1.2rem;margin-bottom:16px">פנה אלינו</h2>
+    <p style="font-size:.82rem;color:var(--t2);line-height:1.8;margin-bottom:20px">לשאלות, הצעות לשיפור או דיווח על בעיה — נשמח לשמוע ממך!</p>
+    <a href="mailto:info@shabbatalarm.app" style="display:block;font-family:'Rubik',sans-serif;padding:11px;border-radius:10px;background:var(--gl);border:1px solid var(--ac);color:var(--ac);text-decoration:none;font-size:.85rem;font-weight:600;margin-bottom:10px">📧 info@shabbatalarm.app</a>
+    <button onclick="this.closest('[style*=fixed]').remove()" style="font-family:'Rubik',sans-serif;padding:10px 32px;border-radius:10px;border:1px solid var(--bd);background:0;color:var(--t2);cursor:pointer;font-size:.85rem">סגור</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+};
 // Bottom nav
 window.btmNav_goto=function(tab){
   document.querySelectorAll('.btm-btn').forEach(b=>b.classList.remove('act'));
-  document.getElementById('bn'+tab.charAt(0).toUpperCase()+tab.slice(1))&&document.getElementById('bn'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('act');
-  if(tab==='home'){document.getElementById('bnHome').classList.add('act');window.scrollTo({top:0,behavior:'smooth'});}
-  else if(tab==='alarms'){document.getElementById('bnAlarms').classList.add('act');const el=document.querySelector('.alarms-cd');if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}}
-  else if(tab==='shabbat'){document.getElementById('bnShabbat').classList.add('act');const el=document.querySelector('.clk');if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}}
+  const btn=document.getElementById('bn'+tab.charAt(0).toUpperCase()+tab.slice(1));
+  if(btn)btn.classList.add('act');
+  ['Home','Alarms','Shabbat'].forEach(s=>{
+    const el=document.getElementById('screen'+s);
+    if(el)el.style.display=(s.toLowerCase()===tab)?'block':'none';
+  });
+  document.querySelector('.ctn').scrollTop=0;
+  if(tab==='shabbat')window.updateShabbatScreen&&window.updateShabbatScreen();
 };
+window.btmNav_goto('home');
 // Init
 initGPS();
 })();
