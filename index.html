@@ -18,9 +18,8 @@
 <style>
 :root{--bg:#0a0e1a;--cd:#111827;--bd:#1e2a42;--ac:#f0c040;--ad:#b8922e;--gl:rgba(240,192,64,.15);--t1:#e8e0d0;--t2:#8a8070;--t3:#5a5548;--er:#f87171;--r:12px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Rubik',sans-serif;background:#060810;color:var(--t1);min-height:100vh;direction:rtl}
-.ctn{max-width:540px;margin:0 auto;padding:8px 14px 0;position:relative;background:var(--bg);border-radius:16px 16px 0 0;overflow:hidden}
-body{overflow-y:auto}
+body{font-family:'Rubik',sans-serif;background:#060810;color:var(--t1);height:100dvh;overflow:hidden;direction:rtl}
+.ctn{max-width:540px;margin:0 auto;height:calc(100dvh - 58px);overflow-y:auto;padding:8px 14px 8px;background:var(--bg);border-radius:16px 16px 0 0}
 /* btm-nav moved inline */
 .btm-nav-inner{display:flex;justify-content:space-around;align-items:center;padding:6px 0}
 .btm-btn{display:flex;flex-direction:column;align-items:center;gap:2px;background:0;border:0;color:var(--t2);font-family:'Rubik',sans-serif;font-size:.6rem;padding:4px 14px;cursor:pointer;transition:.2s;border-radius:8px}
@@ -109,7 +108,6 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
 .zmanim-src{font-size:.65rem;color:var(--t3);text-align:center;margin-top:4px;font-style:italic}
 .zmanim-offline{font-size:.68rem;color:var(--er);text-align:center;margin-top:3px;display:none}
 .screen{display:block}.screen.hidden{display:none}
-.ctn{overflow-y:auto;max-height:calc(100dvh - 60px)}
 @media(max-width:480px){.clk-t{font-size:2.5rem}.ctn{padding:8px 10px 8px}.db{width:33px;height:33px;font-size:.75rem}.fr{flex-direction:column;gap:8px}}
 </style>
 </head>
@@ -255,14 +253,13 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;hei
   </div>
 </div>
 
-<nav id="btmNav" style="display:flex;justify-content:space-around;background:var(--cd);border-top:1px solid var(--bd);border-radius:0 0 12px 12px;padding:6px 0 8px;margin-top:8px">
+</div>
+<nav id="btmNav" style="position:fixed;bottom:0;left:0;right:0;z-index:90;height:58px;display:flex;justify-content:space-around;align-items:center;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)">
   <button class="btm-btn act" id="bnHome" onclick="window.btmNav_goto('home')"><span class="btm-icon">🏠</span>בית</button>
   <button class="btm-btn" id="bnAlarms" onclick="window.btmNav_goto('alarms')"><span class="btm-icon">⏰</span>מעוררים</button>
   <button class="btm-btn" id="bnShabbat" onclick="window.btmNav_goto('shabbat')"><span class="btm-icon">🕯️</span>שבת</button>
   <button class="btm-btn" id="bnSettings" onclick="window.openDrawer()"><span class="btm-icon">⚙️</span>הגדרות</button>
 </nav>
-<div style="text-align:center;padding:6px 0 4px;font-size:.6rem;color:var(--t3)">© 2026 Yossi Krauss — כל הזכויות שמורות</div>
-</div>
 <audio id="aA" preload="auto"></audio>
 <script>
 // © 2026 Yossi Krauss — All rights reserved.
@@ -384,7 +381,7 @@ function prevTone(id){playT(gCtx(),gCtx().currentTime,vS.value/100,2,id);}
 function playT(x,t,v,d,id){if(id==='tone_gentle')[523,659,784,1047].forEach((f,i)=>{const o=x.createOscillator(),g=x.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.4);g.gain.linearRampToValueAtTime(v*.3,t+i*.4+.1);g.gain.linearRampToValueAtTime(0,t+i*.4+.8);o.connect(g);g.connect(x.destination);o.start(t+i*.4);o.stop(t+i*.4+1);});else if(id==='tone_chimes')[880,1109,1319,1568,1319,1109].forEach((f,i)=>{const o=x.createOscillator(),g=x.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.25);g.gain.linearRampToValueAtTime(v*.25,t+i*.25+.05);g.gain.exponentialRampToValueAtTime(.001,t+i*.25+.6);o.connect(g);g.connect(x.destination);o.start(t+i*.25);o.stop(t+i*.25+.7);});else if(id==='tone_shofar'){const bq=175,flt=x.createBiquadFilter();flt.type='lowpass';flt.frequency.value=600;flt.Q.value=2;flt.connect(x.destination);function tk(st,dur,vol){const o=x.createOscillator(),g=x.createGain(),n=x.createOscillator(),ng=x.createGain();o.type='sawtooth';o.frequency.setValueAtTime(bq,st);o.frequency.linearRampToValueAtTime(bq*1.05,st+.15);o.frequency.setValueAtTime(bq*1.02,st+.15);o.frequency.linearRampToValueAtTime(bq*1.08,st+dur-.3);const vib=x.createOscillator(),vg=x.createGain();vib.frequency.value=4.5;vg.gain.value=4;vib.connect(vg);vg.connect(o.frequency);n.type='sawtooth';n.frequency.value=bq*2.01;ng.gain.value=vol*.06;g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol*.18,st+.08);g.gain.setValueAtTime(vol*.15,st+dur*.3);g.gain.linearRampToValueAtTime(vol*.12,st+dur-.2);g.gain.linearRampToValueAtTime(0,st+dur);o.connect(g);n.connect(ng);ng.connect(g);g.connect(flt);vib.start(st);o.start(st);n.start(st);o.stop(st+dur);n.stop(st+dur);vib.stop(st+dur);}let ct=t;tk(ct,1.8,v);ct+=2.0;for(let i=0;i<3;i++){tk(ct,.45,v);ct+=.55;}ct+=.15;for(let i=0;i<9;i++){tk(ct,.12,v*.9);ct+=.17;}ct+=.1;tk(ct,2.2,v);}else if(id==='tone_harp')[262,294,330,392,440,523,587,659].forEach((f,i)=>{const nd=d/8,o=x.createOscillator(),g=x.createGain();o.type='sine';o.frequency.value=f;const s=t+i*nd;g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(v*.3,s+.02);g.gain.exponentialRampToValueAtTime(.001,s+nd*1.5);o.connect(g);g.connect(x.destination);o.start(s);o.stop(s+nd*2);});else if(id==='tone_birds')for(let i=0;i<d*2.5;i++){const s=t+i*(d/(d*2.5))+Math.random()*.1,bf=1800+Math.random()*1200,o=x.createOscillator(),g=x.createGain();o.type='sine';o.frequency.setValueAtTime(bf,s);o.frequency.linearRampToValueAtTime(bf+500,s+.05);o.frequency.linearRampToValueAtTime(bf-200,s+.12);g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(v*.15,s+.02);g.gain.exponentialRampToValueAtTime(.001,s+.18);o.connect(g);g.connect(x.destination);o.start(s);o.stop(s+.2);}}
 function alarmLoop(id,v){const x=gCtx(),cd=3;function cy(){if(!actRing)return;playT(x,x.currentTime,actRing.cv||v,cd,id);}cy();const lp=setInterval(()=>{if(!actRing){clearInterval(lp);return;}cy();},cd*1e3);return lp;}
 // Alarm CRUD
-sAB.addEventListener('click',()=>{const wt=updWake();if(!wt)return;const dur=Math.max(10,parseInt(dI.value)||60),days=selDays.size>0?[...selDays]:[new Date().getDay()];const tef=timeMode==='tefillah'?selTef:'fixed';const prep=timeMode==='tefillah'?(parseInt(pT.value)||15):0;const tefBefore=parseInt($('tefBeforeNetz').value)||30;alarms.push({id:++aIdC,time:wt,dur,days,song:selSong,c1:c1.value,c2:c2.value,vol:vS.value/100,on:true,cust:selSong==='custom'?custFile:null,tef,prep,tm:timeMode,tefBefore});rAlarms();save();});
+sAB.addEventListener('click',()=>{const wt=updWake();if(!wt)return;if(selDays.size===0){alert('אנא בחר לפחות יום אחד');return;}const dur=Math.max(10,parseInt(dI.value)||60),days=[...selDays];const tef=timeMode==='tefillah'?selTef:'fixed';const prep=timeMode==='tefillah'?(parseInt(pT.value)||15):0;const tefBefore=parseInt($('tefBeforeNetz').value)||30;alarms.push({id:++aIdC,time:wt,dur,days,song:selSong,c1:c1.value,c2:c2.value,vol:vS.value/100,on:true,cust:selSong==='custom'?custFile:null,tef,prep,tm:timeMode,tefBefore});rAlarms();save();});
 function calcAlarmTime(a){
 if(a.tef==='fixed')return a.time;
 const tefBefore=a.tefBefore||30;
@@ -501,10 +498,11 @@ window.updateLastAlarm=function(){
   const h=Math.floor(nearest.diff/60),m=nearest.diff%60;
   const durStr=h>0?h+'ש׳ '+m+'ד׳':m+'ד׳';
   const daysStr=nearest.a.days.sort().map(d=>HDS[d]).join(' ');
-  entry.innerHTML='<div style="display:flex;align-items:center;gap:10px"><div style="font-size:1.4rem;font-weight:800;color:var(--ac);min-width:60px">'+nearest.at+'</div><div style="flex:1"><div style="font-size:.75rem;color:var(--t1)">'+nearest.dayLabel+' · עוד '+durStr+'</div><div style="font-size:.68rem;color:var(--t3)">'+daysStr+'</div></div><div class="ato'+(nearest.a.on?' on':'')+'" onclick="nearest_a_toggle('+nearest.a.id+')"></div></div>';
+  entry.innerHTML='<div style="display:flex;align-items:center;gap:8px"><div style="font-size:1.4rem;font-weight:800;color:var(--ac);min-width:60px">'+nearest.at+'</div><div style="flex:1"><div style="font-size:.75rem;color:var(--t1)">'+nearest.dayLabel+' · עוד '+durStr+'</div><div style="font-size:.68rem;color:var(--t3)">'+daysStr+'</div></div><div class="ato'+(nearest.a.on?' on':'')+'" onclick="nearest_a_toggle('+nearest.a.id+')" style="flex-shrink:0"></div><button onclick="nearest_a_delete('+nearest.a.id+')" style="background:0;border:0;color:var(--t3);cursor:pointer;font-size:1rem;padding:2px 4px;flex-shrink:0">✕</button></div>';
   box.style.display='block';
 };
 window.nearest_a_toggle=function(id){const a=alarms.find(x=>x.id===id);if(a){a.on=!a.on;rAlarms();save();}};
+window.nearest_a_delete=function(id){alarms=alarms.filter(x=>x.id!==id);rAlarms();save();};
 
 // Update shabbat screen
 window.updateShabbatScreen=function(){
